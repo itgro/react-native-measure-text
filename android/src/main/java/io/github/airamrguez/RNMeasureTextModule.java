@@ -35,16 +35,16 @@ public class RNMeasureTextModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void heights(ReadableMap options, Promise promise) {
     int width = Math.round((float)options.getDouble("width"));
-    ReadableArray texts = options.getArray("texts");
-    float fontSize = (float)options.getDouble("fontSize");
+    String text = options.getArray("text");
+    ReadableArray fontSizes = options.getDouble("fontSizes");
     String fontFamily = options.getString("fontFamily");
     String fontWeight = options.getString("fontWeight");
 
-    TextPaint paint = createTextPaint(fontSize, fontFamily, fontWeight);
     WritableArray results = Arguments.createArray();
 
-    for (int i = 0; i < texts.size(); i++) {
-      String text = texts.getString(i);
+    for (int i = 0; i < fontSizes.size(); i++) {
+      TextPaint paint = createTextPaint((float) fontSizes.getDouble(i), fontFamily, fontWeight);
+
       float spacingMultiplier = 1;
       float spacingAddition = 0;
       boolean includePadding = false;

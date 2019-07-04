@@ -23,15 +23,16 @@ RCT_EXPORT_METHOD(heights:(NSDictionary *)options
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
     float width = [RCTConvert float:options[@"width"]];
-    NSArray *texts = [RCTConvert NSArray:options[@"texts"]];
-    CGFloat fontSize = [RCTConvert CGFloat:options[@"fontSize"]];
+    NSString text = [RCTConvert NSArray:options[@"text"]];
+    NSArray *fontSizes = [RCTConvert CGFloat:options[@"fontSizes"]];
     NSString *fontFamily = [RCTConvert NSString:options[@"fontFamily"]];
     NSString *fontWeight = [RCTConvert NSString:options[@"fontWeight"]];
 
     NSMutableArray* results = [[NSMutableArray alloc] init];
-    UIFont *font = [self getFont:fontFamily size:fontSize weight:fontWeight];
 
-    for (NSString* text in texts) {
+    for (CGFloat* fontSize in fontSizes) {
+        UIFont *font = [self getFont:fontFamily size:fontSize weight:fontWeight];
+        
         NSTextContainer *textContainer = [[NSTextContainer alloc] initWithSize: CGSizeMake(width, FLT_MAX)];
 
         CGRect resultRect = [self fitText:text withFont:font container:textContainer];
