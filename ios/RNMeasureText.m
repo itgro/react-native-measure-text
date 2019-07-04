@@ -23,21 +23,22 @@ RCT_EXPORT_METHOD(heights:(NSDictionary *)options
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
     float width = [RCTConvert float:options[@"width"]];
-    NSString text = [RCTConvert NSArray:options[@"text"]];
-    NSArray *fontSizes = [RCTConvert CGFloat:options[@"fontSizes"]];
+    NSString *text = [RCTConvert NSString:options[@"text"]];
+    NSArray *fontSizes = [RCTConvert NSArray:options[@"fontSizes"]];
     NSString *fontFamily = [RCTConvert NSString:options[@"fontFamily"]];
     NSString *fontWeight = [RCTConvert NSString:options[@"fontWeight"]];
 
     NSMutableArray* results = [[NSMutableArray alloc] init];
 
-    for (CGFloat* fontSize in fontSizes) {
-        UIFont *font = [self getFont:fontFamily size:fontSize weight:fontWeight];
-        
+    for (NSNumber* fontSize in fontSizes) {
+        UIFont *font = [self getFont:fontFamily size:fontSize.floatValue weight:fontWeight];
+
         NSTextContainer *textContainer = [[NSTextContainer alloc] initWithSize: CGSizeMake(width, FLT_MAX)];
 
         CGRect resultRect = [self fitText:text withFont:font container:textContainer];
         [results addObject:[NSNumber numberWithFloat:resultRect.size.height]];
     }
+
     resolve(results);
 }
 
@@ -50,10 +51,10 @@ RCT_EXPORT_METHOD(widths:(NSDictionary *)options
     CGFloat fontSize = [RCTConvert CGFloat:options[@"fontSize"]];
     NSString *fontFamily = [RCTConvert NSString:options[@"fontFamily"]];
     NSString *fontWeight = [RCTConvert NSString:options[@"fontWeight"]];
-    
+
     NSMutableArray* results = [[NSMutableArray alloc] init];
     UIFont *font = [self getFont:fontFamily size:fontSize weight:fontWeight];
-    
+
     for (NSString* text in texts) {
         NSTextContainer *textContainer = [[NSTextContainer alloc] initWithSize: CGSizeMake(FLT_MAX, height)];
 
@@ -79,10 +80,13 @@ RCT_EXPORT_METHOD(measure:(NSDictionary *)options
 
     [layoutManager addTextContainer:textContainer];
     [textStorage addLayoutManager:layoutManager];
-    
+
     [textStorage addAttribute:NSFontAttributeName value:font
                         range:NSMakeRange(0, [textStorage length])];
     [textContainer setLineFragmentPadding:0.0];
+
+    [textContainer setLineBreakMode:NSLineBreakByWordWrapping];
+
     (void) [layoutManager glyphRangeForTextContainer:textContainer];
     return [layoutManager usedRectForTextContainer:textContainer];
 }

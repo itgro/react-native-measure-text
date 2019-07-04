@@ -30,15 +30,31 @@ public class RNMeasureTextModule extends ReactContextBaseJavaModule {
   @Override
   public String getName() {
     return "RNMeasureText";
-  }  
+  }
 
   @ReactMethod
   public void heights(ReadableMap options, Promise promise) {
     int width = Math.round((float)options.getDouble("width"));
-    String text = options.getArray("text");
-    ReadableArray fontSizes = options.getDouble("fontSizes");
-    String fontFamily = options.getString("fontFamily");
-    String fontWeight = options.getString("fontWeight");
+
+    String text = options.getString("text");
+
+    ReadableArray fontSizes = options.getArray("fontSizes");
+
+    String fontFamily;
+
+    if (options.hasKey("fontFamily")) {
+      fontFamily = options.getString("fontFamily");
+    } else {
+      fontFamily = "Roboto";
+    }
+
+    String fontWeight;
+
+    if (options.hasKey("fontWeight")) {
+      fontWeight = options.getString("fontWeight");
+    } else {
+      fontWeight = Integer.toString(Typeface.DEFAULT.getWeight());
+    }
 
     WritableArray results = Arguments.createArray();
 
@@ -51,22 +67,22 @@ public class RNMeasureTextModule extends ReactContextBaseJavaModule {
       Layout layout;
       if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
         layout = new StaticLayout(
-          text,
-          paint,
-          width,
-          Layout.Alignment.ALIGN_NORMAL,
-          1.f,
-          0.f,
-          includePadding
+                text,
+                paint,
+                width,
+                Layout.Alignment.ALIGN_NORMAL,
+                1.f,
+                0.f,
+                includePadding
         );
       } else {
         layout = StaticLayout.Builder.obtain(text, 0, text.length(), paint, width)
-          .setAlignment(Layout.Alignment.ALIGN_NORMAL)
-          .setLineSpacing(0.f, 1.f)
-          .setIncludePad(includePadding)
-          .setBreakStrategy(textBreakStrategy)
-          .setHyphenationFrequency(Layout.HYPHENATION_FREQUENCY_NORMAL)
-          .build();
+                .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+                .setLineSpacing(0.f, 1.f)
+                .setIncludePad(includePadding)
+                .setBreakStrategy(textBreakStrategy)
+                .setHyphenationFrequency(Layout.HYPHENATION_FREQUENCY_NORMAL)
+                .build();
       }
       results.pushDouble(layout.getHeight());
     }
