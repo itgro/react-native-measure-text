@@ -53,7 +53,7 @@ public class RNMeasureTextModule extends ReactContextBaseJavaModule {
     if (options.hasKey("fontWeight")) {
       fontWeight = options.getString("fontWeight");
     } else {
-      fontWeight = Integer.toString(Typeface.DEFAULT.getWeight());
+      fontWeight = "normal";
     }
 
     WritableArray results = Arguments.createArray();
